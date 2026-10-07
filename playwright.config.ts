@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { env } from './src/config/env';
 
 export default defineConfig({
   testDir: './tests',
@@ -16,18 +17,18 @@ export default defineConfig({
     {
       name: 'web-chromium',
       testDir: './tests/web',
-      use: { ...devices['Desktop Chrome'], baseURL: 'https://www.saucedemo.com' },
+      use: { ...devices['Desktop Chrome'], baseURL: env.webBaseUrl },
     },
     {
       name: 'web-firefox',
       testDir: './tests/web',
-      use: { ...devices['Desktop Firefox'], baseURL: 'https://www.saucedemo.com' },
+      use: { ...devices['Desktop Firefox'], baseURL: env.webBaseUrl },
     },
     {
       name: 'api',
       testDir: './tests/api',
       use: {
-        baseURL: 'https://restful-booker.herokuapp.com',
+        baseURL: env.apiBaseUrl,
         extraHTTPHeaders: { Accept: 'application/json' },
       },
     },

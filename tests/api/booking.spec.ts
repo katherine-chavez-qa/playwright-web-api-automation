@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../src/fixtures/test';
 
 const newBooking = {
   firstname: 'Ana',
@@ -16,13 +16,13 @@ interface CreateBookingResponse {
   booking: Booking;
 }
 
-test.describe('Booking API', () => {
-  test('health check responds 201', async ({ request }) => {
+test.describe('Booking API', { tag: '@regression' }, () => {
+  test('health check responds 201', { tag: '@smoke' }, async ({ request }) => {
     const response = await request.get('/ping');
     expect(response.status()).toBe(201);
   });
 
-  test('creates a booking and retrieves it by id', async ({ request }) => {
+  test('creates a booking and retrieves it by id', { tag: '@smoke' }, async ({ request }) => {
     const createResponse = await request.post('/booking', { data: newBooking });
     expect(createResponse.ok()).toBeTruthy();
 
