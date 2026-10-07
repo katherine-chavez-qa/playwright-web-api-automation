@@ -8,7 +8,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // In CI, the `github` reporter also annotates failures inline on the pull request.
+  reporter: process.env.CI
+    ? [['list'], ['github'], ['html', { open: 'never' }]]
+    : [['list'], ['html', { open: 'never' }]],
   use: {
     testIdAttribute: 'data-test',
     trace: 'on-first-retry',

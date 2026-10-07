@@ -1,46 +1,118 @@
 name: Playwright Tests
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Nightly full run at 06:00 UTC (01:00 Bogota), catching changes in the
+    # external demo sites even when nobody pushes code.
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
+# Least privilege by default; only the deploy job gets write access to Pages.
+permissions:
+  contents: read
 
-      - uses: actions/setup-node@v4
+# A new push to the same PR or branch cancels the run that is still in progress.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Type check, lint and format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
 
-      - name: Type check
-        run: npm run typecheck
+  test:
+    name: ${{ github.event_name == 'pull_request' && 'Smoke tests' || 'Full regression' }}
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
 
-      - name: Lint
-        run: npm run lint
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
 
-      - name: Check formatting
-        run: npm run format:check
+      - run: npm ci
 
-      - name: Install Playwright browsers
+      # Pull requests: fast feedback with @smoke on Chromium + API.
+      - name: Install Chromium
+        if: github.event_name == 'pull_request'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        if: github.event_name == 'pull_request'
+        run: npx playwright test --grep @smoke --project=web-chromium --project=api
+
+      # main, nightly and manual runs: the whole suite on every browser.
+      - name: Install all browsers
+        if: github.event_name != 'pull_request'
         run: npx playwright install --with-deps chromium firefox
 
-      - name: Run tests
+      - name: Run full regression
+        if: github.event_name != 'pull_request'
         run: npx playwright test
 
       - name: Upload HTML report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+      # Traces, screenshots and videos are only useful when something failed.
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 14
+
+      - name: Upload report for GitHub Pages
+        if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: playwright-report/
+
+  deploy-report:
+    name: Publish report to GitHub Pages
+    needs: test
+    # Publish even when tests fail (a red report is the one worth reading), but
+    # never from pull requests and never when the test job did not run at all.
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && (needs.test.result == 'success' || needs.test.result == 'failure') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Never cancel a deployment halfway through.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
