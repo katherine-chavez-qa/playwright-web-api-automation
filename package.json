@@ -1,0 +1,28 @@
+{
+  "name": "playwright-web-api-automation",
+  "version": "1.0.0",
+  "description": "Web UI and API test automation framework with Playwright, TypeScript and GitHub Actions",
+  "scripts": {
+    "test": "playwright test",
+    "test:web": "playwright test --project=web-chromium --project=web-firefox",
+    "test:api": "playwright test --project=api",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "test-automation",
+    "qa",
+    "page-object-model",
+    "api-testing"
+  ],
+  "author": "Katherine Chavez Olaya",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2"
+  }
+}
