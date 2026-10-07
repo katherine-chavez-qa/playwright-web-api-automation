@@ -1,41 +1,9 @@
-import { test as base } from '@playwright/test';
-import { CartPage } from '../pages/CartPage';
-import { CheckoutCompletePage } from '../pages/CheckoutCompletePage';
-import { CheckoutInfoPage } from '../pages/CheckoutInfoPage';
-import { CheckoutOverviewPage } from '../pages/CheckoutOverviewPage';
-import { InventoryPage } from '../pages/InventoryPage';
-import { LoginPage } from '../pages/LoginPage';
+import { mergeTests } from '@playwright/test';
+import { test as apiTest } from './api';
+import { test as pageTest } from './pages';
 
-interface PageObjects {
-  loginPage: LoginPage;
-  inventoryPage: InventoryPage;
-  cartPage: CartPage;
-  checkoutInfoPage: CheckoutInfoPage;
-  checkoutOverviewPage: CheckoutOverviewPage;
-  checkoutCompletePage: CheckoutCompletePage;
-}
-
-// Fixtures are lazy: a page object (and the browser page behind it) is only
-// created when a test asks for it, so API tests can share this `test` for free.
-export const test = base.extend<PageObjects>({
-  loginPage: async ({ page }, use) => {
-    await use(new LoginPage(page));
-  },
-  inventoryPage: async ({ page }, use) => {
-    await use(new InventoryPage(page));
-  },
-  cartPage: async ({ page }, use) => {
-    await use(new CartPage(page));
-  },
-  checkoutInfoPage: async ({ page }, use) => {
-    await use(new CheckoutInfoPage(page));
-  },
-  checkoutOverviewPage: async ({ page }, use) => {
-    await use(new CheckoutOverviewPage(page));
-  },
-  checkoutCompletePage: async ({ page }, use) => {
-    await use(new CheckoutCompletePage(page));
-  },
-});
+// Single entry point for every spec. Fixtures are lazy: a test only pays for
+// what it asks for, so API tests never launch a browser and vice versa.
+export const test = mergeTests(pageTest, apiTest);
 
 export { expect } from '@playwright/test';

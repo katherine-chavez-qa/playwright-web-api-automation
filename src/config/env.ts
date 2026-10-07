@@ -21,4 +21,6 @@ export const env = {
   webBaseUrl: read('WEB_BASE_URL', 'https://www.saucedemo.com'),
   apiBaseUrl: read('API_BASE_URL', 'https://restful-booker.herokuapp.com'),
   saucePassword: read('SAUCE_PASSWORD', 'secret_sauce'),
+  bookerUsername: read('BOOKER_USERNAME', 'admin'),
+  bookerPassword: read('BOOKER_PASSWORD', 'password123'),
 } as const;
