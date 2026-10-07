@@ -31,6 +31,8 @@ export default defineConfig({
     {
       name: 'web-firefox',
       testDir: './tests/web',
+      // axe inspects the DOM, so results do not depend on the browser engine.
+      testIgnore: /accessibility\.spec\.ts/,
       dependencies: ['setup'],
       use: { ...devices['Desktop Firefox'], baseURL: env.webBaseUrl, storageState: authFile },
     },
