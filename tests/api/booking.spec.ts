@@ -9,6 +9,13 @@ const newBooking = {
   additionalneeds: 'Breakfast',
 };
 
+type Booking = typeof newBooking;
+
+interface CreateBookingResponse {
+  bookingid: number;
+  booking: Booking;
+}
+
 test.describe('Booking API', () => {
   test('health check responds 201', async ({ request }) => {
     const response = await request.get('/ping');
@@ -19,7 +26,7 @@ test.describe('Booking API', () => {
     const createResponse = await request.post('/booking', { data: newBooking });
     expect(createResponse.ok()).toBeTruthy();
 
-    const { bookingid, booking } = await createResponse.json();
+    const { bookingid, booking } = (await createResponse.json()) as CreateBookingResponse;
     expect(bookingid).toEqual(expect.any(Number));
     expect(booking).toMatchObject(newBooking);
 

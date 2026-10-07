@@ -6,10 +6,10 @@ Test automation framework for web UI and REST API testing, built with **Playwrig
 
 ## What it covers
 
-| Layer | Target | Tests |
-|---|---|---|
-| Web UI | [Sauce Demo](https://www.saucedemo.com) (public practice store) | Login: valid user, locked-out user, invalid credentials, required fields |
-| API | [Restful Booker](https://restful-booker.herokuapp.com) (public practice API) | Health check, create + retrieve booking, not-found handling |
+| Layer  | Target                                                                       | Tests                                                                    |
+| ------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Web UI | [Sauce Demo](https://www.saucedemo.com) (public practice store)              | Login: valid user, locked-out user, invalid credentials, required fields |
+| API    | [Restful Booker](https://restful-booker.herokuapp.com) (public practice API) | Health check, create + retrieve booking, not-found handling              |
 
 Web tests run on **Chromium and Firefox**.
 
