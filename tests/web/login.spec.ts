@@ -1,6 +1,9 @@
 import { test, expect } from '../../src/fixtures/test';
 import { users } from '../../src/data/users';
 
+// These tests exercise the login form itself, so they must start without a session.
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Login', { tag: '@regression' }, () => {
   test.beforeEach(async ({ loginPage }) => {
     await loginPage.goto();

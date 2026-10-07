@@ -1,10 +1,18 @@
 import { test as base } from '@playwright/test';
+import { CartPage } from '../pages/CartPage';
+import { CheckoutCompletePage } from '../pages/CheckoutCompletePage';
+import { CheckoutInfoPage } from '../pages/CheckoutInfoPage';
+import { CheckoutOverviewPage } from '../pages/CheckoutOverviewPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { LoginPage } from '../pages/LoginPage';
 
 interface PageObjects {
   loginPage: LoginPage;
   inventoryPage: InventoryPage;
+  cartPage: CartPage;
+  checkoutInfoPage: CheckoutInfoPage;
+  checkoutOverviewPage: CheckoutOverviewPage;
+  checkoutCompletePage: CheckoutCompletePage;
 }
 
 // Fixtures are lazy: a page object (and the browser page behind it) is only
@@ -15,6 +23,18 @@ export const test = base.extend<PageObjects>({
   },
   inventoryPage: async ({ page }, use) => {
     await use(new InventoryPage(page));
+  },
+  cartPage: async ({ page }, use) => {
+    await use(new CartPage(page));
+  },
+  checkoutInfoPage: async ({ page }, use) => {
+    await use(new CheckoutInfoPage(page));
+  },
+  checkoutOverviewPage: async ({ page }, use) => {
+    await use(new CheckoutOverviewPage(page));
+  },
+  checkoutCompletePage: async ({ page }, use) => {
+    await use(new CheckoutCompletePage(page));
   },
 });
 
