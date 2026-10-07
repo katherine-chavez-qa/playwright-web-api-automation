@@ -2,6 +2,7 @@
 
 [![Playwright Tests](https://github.com/katherine-chavez-qa/playwright-web-api-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/katherine-chavez-qa/playwright-web-api-automation/actions/workflows/playwright.yml)
 [![Test report](https://img.shields.io/badge/test%20report-GitHub%20Pages-2ea44f)](https://katherine-chavez-qa.github.io/playwright-web-api-automation/)
+[![Node.js 24](https://img.shields.io/badge/node-24-339933)](.nvmrc)
 
 Test automation framework for **web UI, REST API and accessibility** testing, built with **Playwright** and **TypeScript**. It uses the Page Object Model, custom fixtures and schema validation, and runs on GitHub Actions with smoke tests on pull requests, a full regression on `main` and a nightly run.
 
